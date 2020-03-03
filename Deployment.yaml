@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: crsserviceveena-ns
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crsserviceveena-depl
+  namespace: crsserviceveena-ns
+  labels:
+    app: masterdataservice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: crsserviceveena
+  template:
+    metadata:
+      labels:
+        app: crsserviceveena
+    spec:
+      containers:
+      - name: crsserviceveena-container
+        image: myaccessregistry.azurecr.io/crsserviceveena:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: crsserviceveena-svc
+  namespace: crsserviceveena-ns
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: crsserviceveena
